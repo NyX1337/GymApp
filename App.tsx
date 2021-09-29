@@ -50,7 +50,7 @@ export default function App() {
       alert('Molimo Vas upišite nešto u traženo polje')
     } else {
       const newTodo = {
-        id: Math.random(),
+        id: 1,
         task: textInput,
         completed: false,
       }
