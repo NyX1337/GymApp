@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Ionicons } from '@expo/vector-icons'
 import {
@@ -7,15 +7,44 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  FlatList,
 } from 'react-native'
 
 export default function App() {
+  const [todo, setTodo] = useState([
+    { id: 1, task: 'First Todo', completed: true },
+    { id: 2, task: 'Second Todo', completed: true },
+  ])
+
+  function ListItem({ todo }) {
+    return (
+      <View style={styles.listItems}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.addItemsText}>{todo?.task}</Text>
+        </View>
+        <TouchableOpacity style={[styles.Icons]}>
+          <Ionicons name='checkmark-done' size={20} color='white' />
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.Icons, { backgroundColor: 'red' }]}>
+          <MaterialCommunityIcons name='delete' size={24} color='white' />
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <View style={styles.header}>
         <Text style={styles.todoText}>TODO APP</Text>
         <MaterialCommunityIcons name='delete' size={25} color='red' />
       </View>
+
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+        data={todo}
+        renderItem={({ item }) => <ListItem todo={item} />}
+      />
       <View style={styles.footer}>
         <View style={styles.container}>
           <TextInput placeholder='Add Items' />
@@ -69,5 +98,27 @@ const styles = StyleSheet.create({
     elevation: 30,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  Icons: {
+    height: 25,
+    width: 25,
+    backgroundColor: 'green',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 15,
+    borderRadius: 3,
+    flexDirection: 'row',
+  },
+  listItems: {
+    padding: 20,
+    marginVertical: 15,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    elevation: 15,
+    borderRadius: 8,
+  },
+  addItemsText: {
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 })
