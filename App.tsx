@@ -13,18 +13,30 @@ import {
 export default function App() {
   const [todo, setTodo] = useState([
     { id: 1, task: 'First Todo', completed: true },
-    { id: 2, task: 'Second Todo', completed: true },
+    { id: 2, task: 'Second Todo', completed: false },
   ])
 
   function ListItem({ todo }) {
     return (
       <View style={styles.listItems}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.addItemsText}>{todo?.task}</Text>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 16,
+              color: 'black',
+              textDecorationLine: todo?.completed ? 'line-through' : 'none',
+            }}
+          >
+            {todo?.task}
+          </Text>
         </View>
-        <TouchableOpacity style={[styles.Icons]}>
-          <Ionicons name='checkmark-done' size={20} color='white' />
-        </TouchableOpacity>
+        {!todo?.completed && (
+          <TouchableOpacity style={[styles.Icons]}>
+            <Ionicons name='checkmark-done' size={20} color='white' />
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity style={[styles.Icons, { backgroundColor: 'red' }]}>
           <MaterialCommunityIcons name='delete' size={24} color='white' />
         </TouchableOpacity>
