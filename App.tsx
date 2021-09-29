@@ -11,6 +11,7 @@ import {
 } from 'react-native'
 
 export default function App() {
+  const [textInput, setTextInput] = useState('')
   const [todo, setTodo] = useState([
     { id: 1, task: 'First Todo', completed: true },
     { id: 2, task: 'Second Todo', completed: false },
@@ -44,6 +45,20 @@ export default function App() {
     )
   }
 
+  const addTodo = () => {
+    if (textInput === '') {
+      alert('Molimo Vas upišite nešto u traženo polje')
+    } else {
+      const newTodo = {
+        id: Math.random(),
+        task: textInput,
+        completed: false,
+      }
+      setTodo([...todo, newTodo])
+      setTextInput('')
+    }
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <View style={styles.header}>
@@ -59,9 +74,13 @@ export default function App() {
       />
       <View style={styles.footer}>
         <View style={styles.container}>
-          <TextInput placeholder='Add Items' />
+          <TextInput
+            placeholder='Add Items'
+            value={textInput}
+            onChangeText={(text) => setTextInput(text)}
+          />
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={addTodo}>
           <View style={styles.iconContainer}>
             <Ionicons name='add' size={24} color='white' />
           </View>
