@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Ionicons } from '@expo/vector-icons'
 import {
@@ -8,14 +8,20 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function App() {
   const [textInput, setTextInput] = useState('')
-  const [todo, setTodo] = useState([
-    { id: 1, task: 'First Todo', completed: true },
-    { id: 2, task: 'Second Todo', completed: false },
-  ])
+  const [todos, setTodos] = useState([])
+  useEffect(() => {
+    saveTodoOnDevice()
+  }, [todos])
+
+  useEffect(() => {
+    getTodoOnDevice(todos)
+  }, [])
 
   function ListItem({ todo }) {
     return (
@@ -33,16 +39,42 @@ export default function App() {
           </Text>
         </View>
         {!todo?.completed && (
-          <TouchableOpacity style={[styles.Icons]}>
+          <TouchableOpacity
+            style={[styles.Icons]}
+            onPress={() => todoComplete(todo?.id)}
+          >
             <Ionicons name='checkmark-done' size={20} color='white' />
           </TouchableOpacity>
         )}
 
-        <TouchableOpacity style={[styles.Icons, { backgroundColor: 'red' }]}>
+        <TouchableOpacity
+          style={[styles.Icons, { backgroundColor: 'red' }]}
+          onPress={() => deleteTodo(todo?.id)}
+        >
           <MaterialCommunityIcons name='delete' size={24} color='white' />
         </TouchableOpacity>
       </View>
     )
+  }
+
+  const saveTodoOnDevice = async (todos?) => {
+    try {
+      const stringifyTodos = JSON.stringify(todos)
+      await AsyncStorage.setItem('@storage_Key', stringifyTodos)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const getTodoOnDevice = async () => {
+    try {
+      const todos = await AsyncStorage.getItem('todos')
+      if (todos != null) {
+        setTodos(JSON.parse(todos))
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const addTodo = () => {
@@ -50,26 +82,59 @@ export default function App() {
       alert('Molimo Vas upišite nešto u traženo polje')
     } else {
       const newTodo = {
-        id: 1,
         task: textInput,
         completed: false,
       }
-      setTodo([...todo, newTodo])
+      setTodos([...todos, newTodo])
       setTextInput('')
     }
+  }
+
+  const todoComplete = (todoId) => {
+    const newTodo = todos.map((item) => {
+      if (item.id == todoId) {
+        return { ...item, completed: true }
+      }
+      return item
+    })
+    setTodos(newTodo)
+  }
+
+  const deleteTodo = (todoId) => {
+    const newTodo = todos.filter((item) => item.id != todoId)
+    setTodos(newTodo)
+  }
+
+  const deleteAllTodo = () => {
+    Alert.alert('Upozorenje', ' Da li želite izbrisati sve?', [
+      {
+        text: 'Yes',
+        onPress: () => setTodos([]),
+      },
+      {
+        text: 'No',
+      },
+    ])
   }
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <View style={styles.header}>
         <Text style={styles.todoText}>TODO APP</Text>
-        <MaterialCommunityIcons name='delete' size={25} color='red' />
+        <TouchableOpacity>
+          <MaterialCommunityIcons
+            name='delete'
+            size={25}
+            color='red'
+            onPress={deleteAllTodo}
+          />
+        </TouchableOpacity>
       </View>
 
       <FlatList
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
-        data={todo}
+        data={todos}
         renderItem={({ item }) => <ListItem todo={item} />}
       />
       <View style={styles.footer}>
@@ -93,7 +158,7 @@ export default function App() {
 const styles = StyleSheet.create({
   header: {
     padding: 20,
-    marginTop: 20,
+    marginTop: 40,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -106,7 +171,7 @@ const styles = StyleSheet.create({
   footer: {
     position: 'absolute',
     bottom: 30,
-    color: 'white',
+    backgroundColor: 'white',
     width: '100%',
     flexDirection: 'row',
     paddingHorizontal: 20,
