@@ -14,15 +14,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 interface GymItem {
   id: number
-  task: string,
+  task: string
   completed: boolean
 }
 
 export default function App() {
   const [textInput, setTextInput] = useState('')
-  const [todos, setTodos] = useState<GymItem[]>([{
-    id: 1, task: "Press", completed: false
-  }])
+  const [todos, setTodos] = useState<GymItem[]>([
+    {
+      id: 1,
+      task: 'Press',
+      completed: false,
+    },
+  ])
 
   // useEffect(() => {
   //   saveTodoOnDevice(todos)
@@ -59,7 +63,7 @@ export default function App() {
       const newTodo: GymItem = {
         task: textInput,
         completed: false,
-        id: todos.length > 0 ? todos[todos.length - 1].id + 1 : 1
+        id: todos.length > 0 ? todos[todos.length - 1].id + 1 : 1,
       }
       setTodos([...todos, newTodo])
       setTextInput('')
@@ -92,7 +96,6 @@ export default function App() {
     ])
   }
 
-
   function ListItem({ todo }) {
     return (
       <View style={styles.listItems}>
@@ -109,11 +112,18 @@ export default function App() {
           </Text>
         </View>
         <TouchableOpacity
-          // style={[todo.completed ? styles.checkComplete : styles.checkBlank]}
-          style={[styles.Icons]}
+          style={[todo.completed ? styles.checkBlank : styles.checkComplete]}
           onPress={() => todoComplete(todo.id)}
         >
-          {todo.completed ? <Ionicons name='checkmark-done' size={20} color='white' /> : null}
+          {todo.completed ? (
+            <MaterialCommunityIcons
+              name='alpha-x-box'
+              size={20}
+              color='white'
+            />
+          ) : (
+            <Ionicons name='checkmark-done' size={20} color='white' />
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -125,8 +135,6 @@ export default function App() {
       </View>
     )
   }
-
-
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -227,5 +235,25 @@ const styles = StyleSheet.create({
   addItemsText: {
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  checkComplete: {
+    backgroundColor: 'green',
+    height: 25,
+    width: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 15,
+    borderRadius: 3,
+    flexDirection: 'row',
+  },
+  checkBlank: {
+    backgroundColor: 'grey',
+    height: 25,
+    width: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 15,
+    borderRadius: 3,
+    flexDirection: 'row',
   },
 })
