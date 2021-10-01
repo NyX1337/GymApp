@@ -12,78 +12,54 @@ import {
 } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
+interface GymItem {
+  id: number
+  task: string,
+  completed: boolean
+}
+
 export default function App() {
   const [textInput, setTextInput] = useState('')
-  const [todos, setTodos] = useState([])
-  useEffect(() => {
-    saveTodoOnDevice()
-  }, [todos])
+  const [todos, setTodos] = useState<GymItem[]>([{
+    id: 1, task: "Press", completed: false
+  }])
 
-  useEffect(() => {
-    getTodoOnDevice(todos)
-  }, [])
+  // useEffect(() => {
+  //   saveTodoOnDevice(todos)
+  // }, [todos])
 
-  function ListItem({ todo }) {
-    return (
-      <View style={styles.listItems}>
-        <View style={{ flex: 1 }}>
-          <Text
-            style={{
-              fontWeight: 'bold',
-              fontSize: 16,
-              color: 'black',
-              textDecorationLine: todo?.completed ? 'line-through' : 'none',
-            }}
-          >
-            {todo?.task}
-          </Text>
-        </View>
-        {!todo?.completed && (
-          <TouchableOpacity
-            style={[styles.Icons]}
-            onPress={() => todoComplete(todo?.id)}
-          >
-            <Ionicons name='checkmark-done' size={20} color='white' />
-          </TouchableOpacity>
-        )}
+  // useEffect(() => {
+  //   getTodoOnDevice()
+  // }, [])
 
-        <TouchableOpacity
-          style={[styles.Icons, { backgroundColor: 'red' }]}
-          onPress={() => deleteTodo(todo?.id)}
-        >
-          <MaterialCommunityIcons name='delete' size={24} color='white' />
-        </TouchableOpacity>
-      </View>
-    )
-  }
+  // const saveTodoOnDevice = async (todos?) => {
+  //   try {
+  //     const stringifyTodos = JSON.stringify(todos)
+  //     await AsyncStorage.setItem('@storage_Key', stringifyTodos)
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }
 
-  const saveTodoOnDevice = async (todos?) => {
-    try {
-      const stringifyTodos = JSON.stringify(todos)
-      await AsyncStorage.setItem('@storage_Key', stringifyTodos)
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  const getTodoOnDevice = async () => {
-    try {
-      const todos = await AsyncStorage.getItem('todos')
-      if (todos != null) {
-        setTodos(JSON.parse(todos))
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // const getTodoOnDevice = async () => {
+  //   try {
+  //     const todos = await AsyncStorage.getItem('todos')
+  //     if (todos != null) {
+  //       setTodos(JSON.parse(todos))
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   const addTodo = () => {
     if (textInput === '') {
       alert('Molimo Vas upišite nešto u traženo polje')
     } else {
-      const newTodo = {
+      const newTodo: GymItem = {
         task: textInput,
         completed: false,
+        id: todos.length > 0 ? todos[todos.length - 1].id + 1 : 1
       }
       setTodos([...todos, newTodo])
       setTextInput('')
@@ -93,7 +69,7 @@ export default function App() {
   const todoComplete = (todoId) => {
     const newTodo = todos.map((item) => {
       if (item.id == todoId) {
-        return { ...item, completed: true }
+        return { ...item, completed: !item.completed }
       }
       return item
     })
@@ -101,8 +77,7 @@ export default function App() {
   }
 
   const deleteTodo = (todoId) => {
-    const newTodo = todos.filter((item) => item.id != todoId)
-    setTodos(newTodo)
+    setTodos(todos.filter((item) => item.id != todoId))
   }
 
   const deleteAllTodo = () => {
@@ -116,6 +91,42 @@ export default function App() {
       },
     ])
   }
+
+
+  function ListItem({ todo }) {
+    return (
+      <View style={styles.listItems}>
+        <View style={{ flex: 1 }}>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 16,
+              color: 'black',
+              textDecorationLine: todo.completed ? 'line-through' : 'none',
+            }}
+          >
+            {todo.task}
+          </Text>
+        </View>
+        <TouchableOpacity
+          // style={[todo.completed ? styles.checkComplete : styles.checkBlank]}
+          style={[styles.Icons]}
+          onPress={() => todoComplete(todo.id)}
+        >
+          {todo.completed ? <Ionicons name='checkmark-done' size={20} color='white' /> : null}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.Icons, { backgroundColor: 'red' }]}
+          onPress={() => deleteTodo(todo.id)}
+        >
+          <MaterialCommunityIcons name='delete' size={24} color='white' />
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
