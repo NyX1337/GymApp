@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Ionicons } from '@expo/vector-icons'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { NavigationContainer } from '@react-navigation/native'
 import {
   StyleSheet,
   View,
@@ -14,13 +15,13 @@ import {
 import GymScreen from './components/GymScreen'
 import CalorieScreen from './components/CalorieScreen'
 
-const GymNav = createNativeStackNavigator()
+const GymNav = createBottomTabNavigator()
 
 export default function App() {
   return (
-    <GymNav.Navigator>
+    <NavigationContainer>
       <GymNav.Screen name='GymScreen' component={GymScreen} />
       <GymNav.Screen name='CalorieScreen' component={CalorieScreen} />
-    </GymNav.Navigator>
+    </NavigationContainer>
   )
 }
