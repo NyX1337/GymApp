@@ -120,7 +120,7 @@ export default function App() {
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <View style={styles.header}>
-        <Text style={styles.todoText}>TODO APP</Text>
+        <Text style={styles.todoText}>GYM APP</Text>
         <TouchableOpacity>
           <MaterialCommunityIcons
             name='delete'
@@ -140,7 +140,7 @@ export default function App() {
       <View style={styles.footer}>
         <View style={styles.container}>
           <TextInput
-            placeholder='Add Items'
+            placeholder='Add Task'
             value={textInput}
             onChangeText={(text) => setTextInput(text)}
           />
