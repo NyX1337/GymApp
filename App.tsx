@@ -23,9 +23,9 @@ export default function App() {
     <NavigationContainer>
       <GymNav.Navigator
         initialRouteName='GymScreen'
-        activeColor='yellow'
+        activeColor='green'
         inactiveColor='white'
-        barStyle={{ backgroundColor: 'blue' }}
+        barStyle={{ backgroundColor: 'lightblue' }}
       >
         <GymNav.Screen
           name='GymScreen'
